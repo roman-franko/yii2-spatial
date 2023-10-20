@@ -171,11 +171,11 @@ abstract class SpatialHelper { // declare abstract, we don't want instances (tri
         return $r;
     }
 
-    public static function featureToGeom($feat, $inversePolygonCoords = false)    {
+    public static function featureToGeom($feat, $reversePolygonCoords = false)    {
         if ($feat)  {
             switch ($feat['type'])  {
                 case 'Feature':
-                    $feat = $inversePolygonCoords ? static::revertGeomCoords($feat['geometry']) : $feat['geometry'];
+                    $feat = $reversePolygonCoords ? static::reverseCoordinates($feat['geometry']) : $feat['geometry'];
                     break;
 
                 case 'FeatureCollection':
@@ -303,8 +303,8 @@ abstract class SpatialHelper { // declare abstract, we don't want instances (tri
         return $geom;
     }
 
-    public static function featureToWkt($feat, $inversePolygonCoords = false)  {
-        return static::geomToWkt(static::featureToGeom($feat, $inversePolygonCoords = false));
+    public static function featureToWkt($feat, $reversePolygonCoords = false)  {
+        return static::geomToWkt(static::featureToGeom($feat, $reversePolygonCoords = false));
     }
 
     public static function wktToFeature($wkt, $properties = [])   {
