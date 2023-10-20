@@ -25,6 +25,12 @@ class ActiveRecord extends YiiActiveRecord {
     /** @var  float - virtual attribute used by ActiveQuery::nearest() */
     public $_d;
 
+    /** @var  float - virtual attribute used by geomToWkt to reverse coords */
+    public $inversePolygonCoords = false;
+    
+    /** @var  float - virtual attribute used by beforeSave in ST_GeomFromText to specify SRID */
+    public $sRID = null;
+
     /**
      * @return object|\yii\db\ActiveQuery
      * @throws \yii\base\InvalidConfigException
@@ -67,8 +73,9 @@ class ActiveRecord extends YiiActiveRecord {
                     if ($attr)  {
                         $this->_saved[$field] = $attr;
                         $feature = Json::decode($attr);
-                        $wkt = SpatialHelper::featureToWkt($feature);
-                        $this->setAttribute($field, new Expression("ST_GeomFromText('$wkt')"));
+                        $wkt = SpatialHelper::featureToWkt($feature, $this->inversePolygonCoords);
+                        $geomText = isset($this->sRID) ? "ST_GeomFromText('$wkt', $this->sRID)" : "ST_GeomFromText('$wkt')";
+                        $this->setAttribute($field, new Expression($geomText));
                     }
                 }
             }
