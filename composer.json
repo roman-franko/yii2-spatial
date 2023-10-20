@@ -1,5 +1,5 @@
 {
-    "name": "sjaakp/yii2-spatial",
+    "name": "roman-franko/yii2-spatial",
     "description": "Yii2 ActiveRecord supporting MySQL spatial data",
     "keywords": ["yii", "yii2", "extension", "data", "db", "spatial", "MySQL", "map", "geo"],
     "type": "yii2-extension",
@@ -17,7 +17,7 @@
     },
     "autoload": {
         "psr-4": {
-            "sjaakp\\spatial\\": ""
+            "romanfranko\\spatial\\": ""
         }
     }
 }

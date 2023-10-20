@@ -13,21 +13,21 @@ Version 1.1.0 is compatible with MySQL 5.7 and MariaDB 10.3.
 
 Install **Yii2-spatial** with [Composer](https://getcomposer.org/). Either add the following to the require section of your `composer.json` file:
 
-`"sjaakp/yii2-spatial": "*"` 
+`"romanfranko/yii2-spatial": "*"` 
 
 Or run:
 
-`composer require sjaakp/yii2-spatial "*"` 
+`composer require romanfranko/yii2-spatial "*"` 
 
 You can manually install **Yii2-spatial** by [downloading the source in ZIP-format](https://github.com/sjaakp/yii2-spatial/archive/master.zip).
 
 ## Usage ##
 
-Simply use a `sjaakp\spatial\ActiveRecord` as base class for your models, like so:
+Simply use a `romanfranko\spatial\ActiveRecord` as base class for your models, like so:
 
 	<?php
 
-	use sjaakp\spatial\ActiveRecord;
+	use romanfranko\spatial\ActiveRecord;
 
 	class MySpatialModel extends ActiveRecord
 	{
@@ -35,7 +35,7 @@ Simply use a `sjaakp\spatial\ActiveRecord` as base class for your models, like s
 	}
 
 
-**Notice:** if you override `find()` in a `sjaakp\spatial\ActiveRecord`-derived class, be sure to return a `sjaakp\spatial\ActiveQuery` and not an 'ordinary' `yii\db\ActiveQuery`.
+**Notice:** if you override `find()` in a `romanfranko\spatial\ActiveRecord`-derived class, be sure to return a `romanfranko\spatial\ActiveQuery` and not an 'ordinary' `yii\db\ActiveQuery`.
 
 ## ActiveRecord method ##
 

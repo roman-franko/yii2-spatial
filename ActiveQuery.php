@@ -9,13 +9,13 @@
  * @link https://github.com/sjaakp/yii2-spatial
  */
 
-namespace sjaakp\spatial;
+namespace romanfranko\spatial;
 
 use yii\db\ActiveQuery as YiiActiveQuery;
 
 /**
  * Class ActiveQuery
- * @package sjaakp\spatial
+ * @package romanfranko\spatial
  */
 class ActiveQuery extends YiiActiveQuery {
 

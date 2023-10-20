@@ -9,7 +9,7 @@
  * @link https://github.com/sjaakp/yii2-spatial
  */
 
-namespace sjaakp\spatial;
+namespace romanfranko\spatial;
 
 use Yii;
 use yii\db\Expression;
@@ -19,7 +19,7 @@ use yii\base\InvalidCallException;
 
 /**
  * Class ActiveRecord
- * @package sjaakp\spatial
+ * @package romanfranko\spatial
  */
 class ActiveRecord extends YiiActiveRecord {
     /** @var  float - virtual attribute used by ActiveQuery::nearest() */
@@ -100,7 +100,7 @@ class ActiveRecord extends YiiActiveRecord {
                 if ($attr)  {
                     if (YII_DEBUG && preg_match( '/[\\x80-\\xff]+/' , $attr ))   {
                         /* If you get an exception here, it probably means you have overridden find()
-                             and did not return sjaakp\spatial\ActiveQuery. */
+                             and did not return romanfranko\spatial\ActiveQuery. */
                         throw new InvalidCallException('Spatial attribute not converted.');
                     }
                     $geom = SpatialHelper::wktToGeom($attr);

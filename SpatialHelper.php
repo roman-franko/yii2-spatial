@@ -9,13 +9,13 @@
  * @link https://github.com/sjaakp/yii2-spatial
  */
 
-namespace sjaakp\spatial;
+namespace romanfranko\spatial;
 
 use yii\helpers\Json;
 
 /**
  * Class SpatialHelper
- * @package sjaakp\spatial
+ * @package romanfranko\spatial
  * Converts between:
  * - geometry (PHP array)
  * - feature (PHP array)
