@@ -304,7 +304,7 @@ abstract class SpatialHelper { // declare abstract, we don't want instances (tri
     }
 
     public static function featureToWkt($feat, $reversePolygonCoords = false)  {
-        return static::geomToWkt(static::featureToGeom($feat, $reversePolygonCoords = false));
+        return static::geomToWkt(static::featureToGeom($feat, $reversePolygonCoords));
     }
 
     public static function wktToFeature($wkt, $properties = [])   {
