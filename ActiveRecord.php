@@ -118,7 +118,7 @@ class ActiveRecord extends YiiActiveRecord {
                         foreach ($geom['geometries'] as $g) {
                             $feats[] = [
                                 'type' => 'Feature',
-                                'geometry' => $g,
+                                'geometry' => $this->reversePolygonCoords ? SpatialHelper::reverseCoordinates($g) : $g,
                                 'properties' => $this->featureProperties($field, $g)
                             ];
                         }
@@ -128,7 +128,10 @@ class ActiveRecord extends YiiActiveRecord {
                         ];
                     }
                     else {  // ... or to Feature
-                        $feature = SpatialHelper::geomToFeature($geom, $this->featureProperties($field, $geom));
+                        $feature = SpatialHelper::geomToFeature(
+                            $this->reversePolygonCoords ? SpatialHelper::reverseCoordinates($geom) : $geom,
+                            $this->featureProperties($field, $geom)
+                        );
                     }
 
                     $this->setAttribute($field, Json::encode($feature));
