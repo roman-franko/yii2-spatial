@@ -1,4 +1,5 @@
 <?php
+
 /**
  * MIT licence
  * Version 1.1.0
@@ -33,47 +34,56 @@ use yii\helpers\Json;
  * @link http://dev.mysql.com/doc/refman/5.6/en/gis-data-formats.html#gis-wkt-format
  *
  */
-abstract class SpatialHelper { // declare abstract, we don't want instances (trick from Zend)
+abstract class SpatialHelper
+{ // declare abstract, we don't want instances (trick from Zend)
 
-    protected static function implodePoint($pntArray)  {
+    protected static function implodePoint($pntArray)
+    {
         return implode(' ', $pntArray);
     }
 
-    protected static function implodePoints($pntsArray)    {
+    protected static function implodePoints($pntsArray)
+    {
         return implode(',', array_map('static::implodePoint', $pntsArray));
     }
 
-    protected static function implodeLines($lnsArray)    {
-        return implode(',', array_map(function($v){ return '(' . static::implodePoints($v) . ')'; }, $lnsArray));
+    protected static function implodeLines($lnsArray)
+    {
+        return implode(',', array_map(function ($v) {
+            return '(' . static::implodePoints($v) . ')';
+        }, $lnsArray));
     }
 
-    protected static function explodePoint($pnt)    {
+    protected static function explodePoint($pnt)
+    {
         return array_map('floatval', explode(' ', $pnt));
     }
 
-    protected static function explodePoints($pntsWkt)    {
-        return array_map(function($v) {
+    protected static function explodePoints($pntsWkt)
+    {
+        return array_map(function ($v) {
             return static::explodePoint($v);
         }, $pntsWkt);
     }
 
-    protected static function explodeLines($lnsWkt)    {
-        return array_map(function($v) {
+    protected static function explodeLines($lnsWkt)
+    {
+        return array_map(function ($v) {
             $matches = [];
             return preg_match_all('/([-\d. ]+)/', $v, $matches) ? static::explodePoints($matches[1]) : [];
         }, $lnsWkt);
     }
 
-    public static function geomToWkt($geom)   {
+    public static function geomToWkt($geom)
+    {
         $r = '';
         if (! empty($geom)) {
-//            if ($array['type'] == 'Feature') $array = $array['geometry'];
+            //            if ($array['type'] == 'Feature') $array = $array['geometry'];
             $r = strtoupper($geom['type']);
             if ($r == 'GEOMETRYCOLLECTION') {
                 $d = $geom['geometries'];
                 $r .= empty($d) ? ' EMPTY' : '(' . implode(',', array_map('static::geomToWkt', $d)) . ')';
-            }
-            else {
+            } else {
                 $d = $geom['coordinates'];
                 if (empty($d)) {
                     $r .= ' EMPTY';
@@ -95,8 +105,8 @@ abstract class SpatialHelper { // declare abstract, we don't want instances (tri
 
                         case 'MULTIPOLYGON':
                             $r .= '(' . implode(',', array_map(function ($v) {
-                                            return '(' . static::implodeLines($v) . ')';
-                                        }, $d)) . ')';
+                                return '(' . static::implodeLines($v) . ')';
+                            }, $d)) . ')';
                             break;
 
                         default:
@@ -109,7 +119,8 @@ abstract class SpatialHelper { // declare abstract, we don't want instances (tri
         return $r;
     }
 
-    public static function wktToGeom($wkt) {
+    public static function wktToGeom($wkt)
+    {
         $cases = [
             'POINT' => 'Point',
             'MULTIPOINT' => 'MultiPoint',
@@ -121,7 +132,7 @@ abstract class SpatialHelper { // declare abstract, we don't want instances (tri
         ];
         $r = [];
         $matches = [];
-        if (preg_match('/([^( ]+)/', $wkt, $matches))    {
+        if (preg_match('/([^( ]+)/', $wkt, $matches)) {
             $type = $matches[1];
             $r['type'] = $cases[$type];
             $data = [];
@@ -147,7 +158,7 @@ abstract class SpatialHelper { // declare abstract, we don't want instances (tri
 
                     case 'MULTIPOLYGON':
                         if (preg_match_all('/\(?(\({2}.*?\){2})/', $wkt, $matches)) {
-                            $data = array_map(function($v) {
+                            $data = array_map(function ($v) {
                                 $pmatches = [];
                                 return preg_match_all('/\(([-\d., ]+)/', $v, $pmatches) ? static::explodeLines($pmatches[1]) : [];
                             }, $matches[1]);
@@ -171,9 +182,10 @@ abstract class SpatialHelper { // declare abstract, we don't want instances (tri
         return $r;
     }
 
-    public static function featureToGeom($feat, $reversePolygonCoords = false)    {
-        if ($feat)  {
-            switch ($feat['type'])  {
+    public static function featureToGeom($feat, $reversePolygonCoords = false)
+    {
+        if ($feat) {
+            switch ($feat['type']) {
                 case 'Feature':
                     $feat = $reversePolygonCoords ? static::reverseCoordinates($feat['geometry']) : $feat['geometry'];
                     break;
@@ -183,7 +195,9 @@ abstract class SpatialHelper { // declare abstract, we don't want instances (tri
                     if (count($features) == 1) $feat = current($features)['geometry'];
                     else $feat = [
                         'type' => 'GeometryCollection',
-                        'geometries' => array_map(function($v) { return $v['geometry']; }, $features)
+                        'geometries' => array_map(function ($v) use ($reversePolygonCoords) {
+                            return $reversePolygonCoords ? static::reverseCoordinates($v['geometry']) : $v['geometry'];
+                        }, $features)
                     ];
                     break;
 
@@ -204,9 +218,10 @@ abstract class SpatialHelper { // declare abstract, we don't want instances (tri
         return $feat;
     }
 
-    public static function geomToFeature($geom, $properties = []) {
-        if ($geom)  {
-            switch ($geom['type'])  {
+    public static function geomToFeature($geom, $properties = [])
+    {
+        if ($geom) {
+            switch ($geom['type']) {
                 case 'Point':
                 case 'MultiPoint':
                 case 'LineString':
@@ -228,8 +243,7 @@ abstract class SpatialHelper { // declare abstract, we don't want instances (tri
                             'geometry' => current($geoms),
                             'properties' => $properties
                         ];
-                    }
-                    else {
+                    } else {
                         // compile a FeatureCollection and return it
                         $feats = [];
                         foreach ($geoms as $g) {
@@ -244,7 +258,7 @@ abstract class SpatialHelper { // declare abstract, we don't want instances (tri
                             'features' => $feats
                         ];
 
-/*                          // collection has more items (or zero)
+                        /*                          // collection has more items (or zero)
                                 // see if they are all of the same type
                         $type = false;
                         foreach ($geoms as $g) {
@@ -303,23 +317,27 @@ abstract class SpatialHelper { // declare abstract, we don't want instances (tri
         return $geom;
     }
 
-    public static function featureToWkt($feat, $reversePolygonCoords = false)  {
+    public static function featureToWkt($feat, $reversePolygonCoords = false)
+    {
         return static::geomToWkt(static::featureToGeom($feat, $reversePolygonCoords));
     }
 
-    public static function wktToFeature($wkt, $properties = [])   {
+    public static function wktToFeature($wkt, $properties = [])
+    {
         return static::geomToFeature(static::wktToGeom($wkt), $properties);
     }
 
-    public static function jsonToGeom($json)    {
+    public static function jsonToGeom($json)
+    {
         return static::featureToGeom(Json::decode($json));
     }
 
-    public static function geomToJson($geom)    {
+    public static function geomToJson($geom)
+    {
         return Json::encode(static::geomToFeature($geom));
     }
 
-/*    public static function featureCollToGeom($featureColl)  {
+    /*    public static function featureCollToGeom($featureColl)  {
         if ($featureColl['type'] == 'FeatureCollection') {
             $points = [];
             $lineStrings = [];
@@ -409,18 +427,24 @@ abstract class SpatialHelper { // declare abstract, we don't want instances (tri
         return $featureColl;
     }*/
 
-    protected static function revCoords($array)    {
-        if (is_array($array) && ! empty($array))    {
+    protected static function revCoords($array)
+    {
+        if (is_array($array) && ! empty($array)) {
             $item = $array[0];
-            if (is_array($item)) return array_map(function($v) { return static::revCoords($v); }, $array);
+            if (is_array($item)) return array_map(function ($v) {
+                return static::revCoords($v);
+            }, $array);
             else return array_reverse($array);
         }
         return $array;
     }
 
-    public static function reverseCoordinates($array)    {
-        if (isset($array['geometries'])) $array['geometries'] = array_map(function($v) { return static::reverseCoordinates($v); }, $array['geometries']);
+    public static function reverseCoordinates($array)
+    {
+        if (isset($array['geometries'])) $array['geometries'] = array_map(function ($v) {
+            return static::reverseCoordinates($v);
+        }, $array['geometries']);
         else if (isset($array['coordinates'])) $array['coordinates'] = static::revCoords($array['coordinates']);
         return $array;
     }
-} 
+}
