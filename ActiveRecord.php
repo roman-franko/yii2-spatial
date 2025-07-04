@@ -115,7 +115,7 @@ class ActiveRecord extends YiiActiveRecord {
                     // Transform geometry FeatureCollection...
                     if ($geom['type'] == 'GeometryCollection')  {
                         $feats = [];
-                        foreach ($geom['geometries'] as $g) {
+                        foreach ($geom['geometries'] ?? [] as $g) {
                             $feats[] = [
                                 'type' => 'Feature',
                                 'geometry' => $this->reversePolygonCoords ? SpatialHelper::reverseCoordinates($g) : $g,
