@@ -44,7 +44,7 @@ abstract class SpatialHelper
 
     protected static function implodePoints($pntsArray)
     {
-        return implode(',', array_map('static::implodePoint', $pntsArray));
+        return implode(',', array_map([static::class, 'implodePoint'], $pntsArray));
     }
 
     protected static function implodeLines($lnsArray)
